@@ -136,8 +136,8 @@ class Window(Window):
 
         if keystr == 'ESCAPE':
             self.exit_prompt()
-        elif keystr == 'P':
-            self.pause_prompt()
+        #elif keystr == 'P':
+            #self.pause_prompt()
 
         if self.replay_mode:
             if self.on_key_press_replay != None:
