@@ -1,0 +1,16 @@
+# Scénario de test du OpenMATB
+
+#0:00:00;tactonsinfo;start
+0:00:00;track;start
+0:00:00;resman;start
+#0:00:00;communications;start
+0:00:00;sysmon;start
+
+0:00:05;resman;automaticsolver;True
+0:00:05;sysmon;automaticsolver;True
+
+#0:00:10;tactonsinfo;stop
+0:01:00;track;stop
+#0:01:10;communications;stop
+0:01:00;resman;stop
+0:01:00;sysmon;stop
