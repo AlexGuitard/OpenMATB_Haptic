@@ -1,5 +1,4 @@
 from core.container import Container
-from core.widgets import tactons
 from core.widgets.tactons import Tactons
 from plugins.abstract import AbstractPlugin
 
@@ -17,4 +16,4 @@ class Tactonsinfo(AbstractPlugin):
         tactons_l = self.task_container.l
 
         tactons_container = Container('tactonsInfo', tactons_l, tactons_b, tactons_w, tactons_h)
-        tactons['widget'] = self.add_widget('tactonsInfo', Tactons, tactons_container)
+        self.add_widget('tactonsInfo', Tactons, tactons_container)

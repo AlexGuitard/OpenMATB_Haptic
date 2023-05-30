@@ -8,6 +8,8 @@ from pyglet.window import Window, key as winkey
 from pyglet.graphics import Batch
 from pyglet.gl import GL_POLYGON
 from pyglet.text import Label
+from pythonosc import udp_client
+
 from core.container import Container
 from core.constants import COLORS as C, FONT_SIZES as F, Group as G, PLUGIN_TITLE_HEIGHT_PROPORTION
 from core.modaldialog import ModalDialog
@@ -75,6 +77,11 @@ class Window(Window):
         self.highlight_aoi = highlight_aoi
         self.hide_on_pause = hide_on_pause
 
+        self.tactilient_id = "127.0.0.2"
+        self.tactilient_port = 5000
+        self.client = udp_client.SimpleUDPClient(self.tactilient_id, self.tactilient_port)
+        self.keys_tactilient = ['A', 'S', 'C', 'T', 'H', 'COMMA', 'P', 'user_key(c0)', 'RSHIFT']
+
 
     def is_in_replay_mode(self):
         return self.replay_mode is True
@@ -138,6 +145,8 @@ class Window(Window):
             self.exit_prompt()
         #elif keystr == 'P':
             #self.pause_prompt()
+        if keystr in self.keys_tactilient:
+            self.send_key_press(keystr)
 
         if self.replay_mode:
             if self.on_key_press_replay != None:
@@ -146,6 +155,8 @@ class Window(Window):
 
         logger.record_input('keyboard', keystr, 'press')
 
+    def send_key_press(self, key):
+        self.client.send_message("/keypress", key)
 
     def on_key_release(self, symbol, modifiers):
         if self.modal_dialog is not None:

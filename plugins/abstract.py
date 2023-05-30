@@ -8,7 +8,7 @@ from core.widgets import Simpletext, SimpleHTML, Frame
 from core.constants import *
 from core.container import Container
 from core.logger import logger
-from pythonosc import udp_client
+
 
 
 class AbstractPlugin:
@@ -21,14 +21,9 @@ class AbstractPlugin:
         self.win = window  # The window to which the plugin is attached
         self.container = None  # The visual area of the plugin (object)
         self.logger = logger
-        self.tactilient_id = "127.0.0.2"
-        self.tactilient_port = 5000
-        self.client = udp_client.SimpleUDPClient(self.tactilient_id, self.tactilient_port)
 
         self.can_receive_keys = False
         self.keys = list()  # Handle the keys that are allowed
-        #self.keys.extend(['A', 'S', 'C', 'T', 'H', 'COMMA', 'P', 'user_key(c0)', 'RSHIFT'])
-        self.keys_tactilient = ['A', 'S', 'C', 'T', 'H', 'COMMA', 'P', 'user_key(c0)', 'RSHIFT']
         self.display_title = taskplacement != 'invisible'
         self.automode_string = str()
 
@@ -261,23 +256,9 @@ class AbstractPlugin:
         else:
             return None
 
-    def filter_key_to_send(self, symbol):
-        if self.can_receive_keys == True:
-            sym_string = winkey.symbol_string(symbol)
-            keystr = sym_string if sym_string in self.keys_tactilient else None
-            return keystr
-        else:
-            return None
-
-    def send_key_press(self, key):
-        self.client.send_message("/keypress", key)
-
     def on_key_press(self, symbol, modifiers):
         key = self.filter_key(symbol)
-        key_send = self.filter_key_to_send(symbol)
         self.do_on_key(key, 'press')
-        if key_send != None:
-            self.send_key_press(key_send)
 
     def on_key_release(self, symbol, modifiers):
         key = self.filter_key(symbol)
