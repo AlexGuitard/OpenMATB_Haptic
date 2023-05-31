@@ -1,7 +1,9 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
+import time
 
+from PySide6.QtCore import QCoreApplication
 from pyglet import font
 from pyglet.canvas import get_display
 from pyglet.window import Window, key as winkey
@@ -145,18 +147,19 @@ class Window(Window):
             self.exit_prompt()
         #elif keystr == 'P':
             #self.pause_prompt()
-        if keystr in self.keys_tactilient:
-            self.send_key_press(keystr)
 
         if self.replay_mode:
             if self.on_key_press_replay != None:
                 self.on_key_press_replay(symbol, modifiers)
             return
 
+        if keystr in self.keys_tactilient:
+            self.send_key_press(keystr)
+
         logger.record_input('keyboard', keystr, 'press')
 
     def send_key_press(self, key):
-        self.client.send_message("/keypress", key)
+        self.client.send_message("/keypress", [key, time.perf_counter()])
 
     def on_key_release(self, symbol, modifiers):
         if self.modal_dialog is not None:
@@ -177,6 +180,7 @@ class Window(Window):
 
 
     def exit(self):
+        QCoreApplication.instance().close_signal.emit()
         self.alive = False
 
 
