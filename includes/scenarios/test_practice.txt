@@ -1,0 +1,5 @@
+# Scénario de test du practice Tactilient
+
+0:00:00;tactonsinfo;start
+
+0:10:00;tactonsinfo;stop
