@@ -7,6 +7,7 @@ from core.widgets import Simpletext, Slider, Frame
 from core.constants import FONT_SIZES as F, PATHS as P, COLORS as C
 from re import match as regex_match
 
+
 class Genericscales(BlockingPlugin):
     def __init__(self, window):
         super().__init__(window)
@@ -64,6 +65,7 @@ class Genericscales(BlockingPlugin):
     def stop(self):
         for slider_name, slider_widget in self.sliders.items():
             self.log_performance(slider_widget.get_title(), slider_widget.get_value())
+        self.send_local_message(False)
         super().stop()
         
 

@@ -2,10 +2,10 @@ import subprocess
 import sys
 import threading
 
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Signal, QObject, Slot, QThread
 from PySide6.QtGui import QPixmap, QFont
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from pythonosc import osc_server
 from pythonosc.dispatcher import Dispatcher
 
@@ -36,35 +36,32 @@ class Tactilient(QMainWindow):
 
         self.response = QLabel('Your Answer :')
         self.response.setFont(QFont("Helvetica", 20))
-        self.response.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom)
-        self.response.setStyleSheet("margin-bottom: 30px")
+        self.response.setStyleSheet("margin-left:50px; margin-top: 7px")
         response_layout.addWidget(self.response)
 
         self.text_response = QLabel('')
-        self.text_response.setFont(QFont("Helvetica", 40))
-        self.text_response.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom)
-        self.text_response.setStyleSheet("margin-bottom: 17px")
+        self.text_response.setFont(QFont("Helvetica", 35))
         response_layout.addWidget(self.text_response)
 
         response_value_layout.addLayout(response_layout)
 
         self.value = QLabel('Correct Answer :')
         self.value.setFont(QFont("Helvetica", 20))
-        self.value.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom)
-        self.value.setStyleSheet("margin-bottom: 30px")
+        self.value.setStyleSheet("margin-top: 7px")
         value_layout.addWidget(self.value)
 
         self.text_value = QLabel('')
-        self.text_value.setFont(QFont("Helvetica", 40))
-        self.text_value.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom)
-        self.text_value.setStyleSheet("margin-bottom: 17px")
+        self.text_value.setFont(QFont("Helvetica", 35))
+        self.text_value.setStyleSheet("margin-left: 15px")
         value_layout.addWidget(self.text_value)
 
         response_value_layout.addLayout(value_layout)
 
-        #space_between_labels = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        #response_value_layout.addItem(space_between_labels)
+        self.label_practice = QLabel('')
+        self.label_practice.setFont(QFont("Helvetica", 25))
+        self.label_practice.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignTop)
 
+        layout.addWidget(self.label_practice)
         layout.addLayout(response_value_layout)
         container = QtWidgets.QWidget()
         container.setLayout(layout)
@@ -100,9 +97,9 @@ class Tactilient(QMainWindow):
             self.text_response.setText(response)
 
             if response == value:
-                self.text_response.setStyleSheet("margin-bottom: 17px; color: green;")
+                self.text_response.setStyleSheet("margin-left: 15px; color: green;")
             else:
-                self.text_response.setStyleSheet("margin-bottom: 17px; color: red;")
+                self.text_response.setStyleSheet("margin-left: 15px; color: red;")
 
     def showHints(self):
         self.value.setVisible(True)
@@ -123,17 +120,27 @@ class Tactilient(QMainWindow):
     def init_practice_mode(self, address, *args):
         if address == '/condition':
             condition = args[0]
-            print(condition)
+            location = args[1]
             if condition == 'practice':
                 self.show_hints_signal.emit()
+                self.label_practice.setText(condition + ' ' + 'on' + ' ' + location)
             else:
                 self.hideHints()
+
+    def minimize_window(self, address, *args):
+        if address == "/minimize":
+            minimize = args[0]
+            if minimize:
+                pyside_window.hide()
+            else:
+                pyside_window.show()
 
     def start_server(self):
         print("Starting Server")
         dispatcher = Dispatcher()
         dispatcher.map("/value", self.update_trial)
         dispatcher.map("/condition", self.init_practice_mode)
+        dispatcher.map("/minimize", self.minimize_window)
         self.server = osc_server.ThreadingOSCUDPServer(("127.0.0.3", 5001), dispatcher)
         print("Serving on {}".format(self.server.server_address))
         thread = threading.Thread(target=self.server.serve_forever)
@@ -152,11 +159,15 @@ class Tactilient(QMainWindow):
 
 class SignalHandler(QObject):
     close_signal = Signal()
+    window_closed = False
 
     @Slot()
     def close_window(self):
-        pyside_window.close()
-        app.quit()
+        if not self.window_closed:
+            self.window_closed = True
+            pyside_window.close()
+            pyside_window.stop_server()
+            app.quit()
 
 
 class ProcessWatcher(QObject):
@@ -173,21 +184,27 @@ class ProcessWatcher(QObject):
         self.process_finished.emit()
 
 
-app = QApplication([])
-pyside_window = Tactilient()
-pyside_window.show()
-pyside_window.start_server()
+class ProcessThread(QThread):
+    def run(self):
+        process = subprocess.Popen(["python", "main.py"])
+        process.wait()
 
-signal_handler = SignalHandler()
-process_watcher = ProcessWatcher()
-signal_handler.close_signal.connect(signal_handler.close_window)
-process_watcher.process_finished.connect(signal_handler.close_window)
 
-process_watcher_thread = QThread()
-process_watcher.moveToThread(process_watcher_thread)
-process_watcher_thread.started.connect(process_watcher.start_process)
-process_watcher_thread.start()
+if __name__ == "__main__":
+    app = QApplication([])
+    pyside_window = Tactilient()
+    pyside_window.show()
+    pyside_window.start_server()
 
-app.aboutToQuit.connect(signal_handler.close_window)
+    signal_handler = SignalHandler()
+    process_thread = ProcessThread()
 
-sys.exit(app.exec())
+    signal_handler.close_signal.connect(pyside_window.stop_server)
+    signal_handler.close_signal.connect(app.quit)
+    signal_handler.close_signal.connect(process_thread.quit)
+    signal_handler.close_signal.connect(process_thread.wait)
+
+    process_thread.finished.connect(signal_handler.close_window)
+    process_thread.start()
+
+    sys.exit(app.exec())

@@ -80,11 +80,8 @@ class Window(Window):
         self.hide_on_pause = hide_on_pause
 
         self.tactilient_id = "127.0.0.2"
-        #self.local_id = "127.0.0.3"
         self.tactilient_port = 5000
-        #self.local_port = 5001
         self.client = udp_client.SimpleUDPClient(self.tactilient_id, self.tactilient_port)
-        #self.client_local = udp_client.SimpleUDPClient(self.local_id, self.local_port)
         self.keys_tactilient = ['A', 'S', 'C', 'T', 'H', 'COMMA', 'P', 'user_key(c0)', 'RSHIFT']
 
 
@@ -163,7 +160,6 @@ class Window(Window):
 
     def send_key_press(self, key):
         self.client.send_message("/keypress", [key, time.perf_counter()])
-        #self.client_local.send_message("/response", key)
 
     def on_key_release(self, symbol, modifiers):
         if self.modal_dialog is not None:

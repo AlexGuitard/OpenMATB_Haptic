@@ -4,6 +4,8 @@
 
 from pathlib import Path
 from pyglet.window import key as winkey
+from pythonosc import udp_client
+
 from core.widgets import Simpletext, SimpleHTML, Frame
 from core.constants import *
 from core.container import Container
@@ -370,8 +372,13 @@ class BlockingPlugin(AbstractPlugin):
         #  should not be stopped)
         self.stop_on_end = True
 
+        self.local_id = "127.0.0.3"
+        self.local_port = 5001
+        self.client_local = udp_client.SimpleUDPClient(self.local_id, self.local_port)
+
     def create_widgets(self):
         super().create_widgets()
+        self.send_local_message(True)
         self.go_to_next_slide = True  # So the first slide appears as soon as possible
 
         # Create an input path if relevant
@@ -451,6 +458,9 @@ class BlockingPlugin(AbstractPlugin):
         # Waiting for the key release to advance one slide at the time
         if key.lower() == 'space' and state == 'release':
             self.go_to_next_slide = True
+
+    def send_local_message(self, minimize):
+        self.client_local.send_message("/minimize", minimize)
 
 # TODO : Include a Solver class like
 # ~ """
