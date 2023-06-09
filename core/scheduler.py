@@ -306,7 +306,8 @@ class Scheduler:
     def on_finish_message(self, address, *args):
         if address == "/conditionfinish":
             finish = args[0]
-            if finish and self.condition != "practice":
+            #and self.condition != "practice"
+            if finish:
                 print("test")
                 self.count_time += 720
                 self.scenariotime = self.count_time

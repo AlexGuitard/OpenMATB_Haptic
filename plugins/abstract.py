@@ -449,7 +449,6 @@ class BlockingPlugin(AbstractPlugin):
     def on_key_press(self, symbol, modifiers):
         if self.parameters['allowkeypress'] == True:
             super().on_key_press(symbol, modifiers)
-            self.send_local_message(False)
 
     def do_on_key(self, key, state):
         super().do_on_key(key, state)
@@ -459,6 +458,7 @@ class BlockingPlugin(AbstractPlugin):
         # Waiting for the key release to advance one slide at the time
         if key.lower() == 'space' and state == 'release':
             self.go_to_next_slide = True
+            self.send_local_message(False)
 
     def send_local_message(self, minimize):
         self.client_local.send_message("/minimize", minimize)

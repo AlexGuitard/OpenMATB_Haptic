@@ -158,8 +158,8 @@ class Window(Window):
 
         if keystr in self.keys_tactilient:
             self.send_key_press(keystr, time_send)
-
-        logger.record_input('keyboard', keystr, 'press')
+        if keystr != "user_key(af)":
+            logger.record_input('keyboard', keystr, 'press')
 
     def send_key_press(self, key, time):
         self.client.send_message("/keypress", [key, time])
@@ -171,7 +171,8 @@ class Window(Window):
 
         keystr = winkey.symbol_string(symbol)
         self.keyboard[keystr] = False  # KeyStateHandler
-        logger.record_input('keyboard', keystr, 'release')
+        if keystr != "user_key(af)":
+            logger.record_input('keyboard', keystr, 'release')
 
 
     def exit_prompt(self):
