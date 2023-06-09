@@ -256,7 +256,6 @@ class Scheduler:
                 #event.done = False
 
         events_time = [event for event in self.events if event.done != 1]
-        print(events_time)
 
         self.scenariotime = time
 
@@ -308,11 +307,8 @@ class Scheduler:
             finish = args[0]
             #and self.condition != "practice"
             if finish:
-                print("test")
                 self.count_time += 720
                 self.scenariotime = self.count_time
-                print(self.count_time)
-                print(self.scenariotime)
 
     def on_workload_message(self, address, *args):
         if address == "/workload":

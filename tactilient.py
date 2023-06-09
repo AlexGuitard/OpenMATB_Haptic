@@ -10,6 +10,8 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from pythonosc import osc_server
 from pythonosc.dispatcher import Dispatcher
 
+from screeninfo import get_monitors
+
 file = "./includes/img/Stimulus_Sansfond.png"
 
 
@@ -83,6 +85,14 @@ class Tactilient(QMainWindow):
         self.label_practice.setVisible(False)
 
         self.server = None
+
+        monitors = get_monitors()
+        if len(monitors) > 1:
+            # Utiliser le deuxième écran (index 1)
+            screen = monitors[1]
+            window_x = screen.x
+            window_y = screen.y + 80
+            self.move(window_x, window_y)
 
         self.show_hints_signal.connect(self.showHints)
 

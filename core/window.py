@@ -63,7 +63,7 @@ class Window(Window):
 
         self._fullscreen=fullscreen
 
-        super().__init__(fullscreen=self._fullscreen, width=self._width, height=self._height, vsync=True, *args, **kwargs)
+        super().__init__(fullscreen=self._fullscreen, screen=screen, width=self._width, height=self._height, vsync=True, *args, **kwargs)
 
         self.set_size_and_location()  # Postpone multiple monitor support
         self.set_mouse_visible(replay_mode)
