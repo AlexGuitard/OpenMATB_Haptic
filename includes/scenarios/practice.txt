@@ -1,0 +1,68 @@
+# Scénario pour le practice de OpenMATB
+
+# Message d'accueil
+0:00:00;instructions;filename;default/welcome_screen.txt
+0:00:00;instructions;start
+
+# Visionnage de l'environnement complet pendant dix secondes
+0:00:00;tactonsinfo;start
+0:00:00;track;start
+0:00:00;scheduling;start
+0:00:00;resman;start
+0:00:00;communications;start
+
+# Présentation de la Poursuite
+0:00:10;resman;hide
+0:00:10;resman;pause
+0:00:10;communications;hide
+0:00:10;communications;pause
+0:00:10;scheduling;hide
+0:00:10;scheduling;pause
+0:00:10;instructions;filename;default/track.txt
+0:00:10;instructions;start
+0:00:10;track;targetproportion;0.6842105263157895
+0:01:10;track;targetproportion;0.21052631578947367
+
+#Presentation de la communications
+0:02:10;communications;show
+0:02:10;communications;resume
+0:02:10;track;hide
+0:02:10;track;pause
+0:02:10;instructions;filename;default/communications.txt
+0:02:10;instructions;start
+0:02:15;communications;radioprompt;own
+0:02:50;communications;radioprompt;other
+
+# Présentation du Resman
+0:03:30;resman;show
+0:03:30;resman;resume
+0:03:30;communications;hide
+0:03:30;communications;pause
+0:03:30;instructions;filename;default/resman.txt
+0:03:30;instructions;start
+0:03:35;resman;tank-a-lossperminute;378
+0:03:35;resman;tank-b-lossperminute;378
+0:04:15;resman;tank-a-lossperminute;947
+0:04:15;resman;tank-b-lossperminute;947
+
+0:05:00;scheduling;show
+0:05:00;scheduling;resume
+0:05:00;instructions;filename;default/scheduling.txt
+0:05:00;instructions;start
+
+0:05:15;track;show
+0:05:15;track;resume
+0:05:15;communications;show
+0:05:15;communications;resume
+0:05:15;instructions;filename;default/full.txt
+0:05:15;instructions;start
+
+0:05:40;communications;radioprompt;own
+0:06:30;communications;radioprompt;other
+
+0:07:00;tactonsinfo;stop
+0:07:00;track;stop
+0:07:00;communications;stop
+0:07:00;resman;stop
+0:07:00;scheduling;stop
+

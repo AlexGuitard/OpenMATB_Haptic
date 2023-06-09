@@ -449,6 +449,7 @@ class BlockingPlugin(AbstractPlugin):
     def on_key_press(self, symbol, modifiers):
         if self.parameters['allowkeypress'] == True:
             super().on_key_press(symbol, modifiers)
+            self.send_local_message(False)
 
     def do_on_key(self, key, state):
         super().do_on_key(key, state)

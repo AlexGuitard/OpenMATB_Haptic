@@ -1,9 +1,12 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
-
+import threading
 from sys import exit
 from pyglet.app import EventLoop
+from pythonosc import osc_server
+from pythonosc.dispatcher import Dispatcher
+
 from core.scenario import Event
 from core.clock import Clock
 from core.modaldialog import ModalDialog
@@ -54,8 +57,10 @@ class Scheduler:
 
         self.clock.schedule(self.update)
         self.event_loop = EventLoop()
+        self.server = None
 
-
+        self.condition = None
+        self.count_time = 0
 
     def update(self, dt):
         if self.win.modal_dialog is not None:
@@ -238,6 +243,22 @@ class Scheduler:
         self.scenario_clock.resume('replay')
         self.clock.set_speed(replay_acceleration_factor)
 
+    def move_scenariotime(self, time):
+        if time < self.scenariotime:
+            for plugin in self.plugins:
+                self.plugins[plugin].scenariotime = time
+                self.target_time = time
+                self.plugins[plugin].next_refresh_time = time
+                #print(self.plugins[plugin].alias)
+                #print(self.plugins[plugin].next_refresh_time)
+
+            #for event in self.events:
+                #event.done = False
+
+        events_time = [event for event in self.events if event.done != 1]
+        print(events_time)
+
+        self.scenariotime = time
 
     def play_scenario(self, target_time):
         self.clock.set_speed(5)
@@ -255,8 +276,51 @@ class Scheduler:
         logger.log_manual_entry('end')
         self.event_loop.exit()
         self.win.close()
+        self.stop_server()
         sys.exit(0)
 
 
     def run(self):
         self.event_loop.run()
+
+    def start_server(self):
+        print("Starting Server OpenMATB")
+        matb_dispatcher = Dispatcher()
+        matb_dispatcher.map("/conditionfinish", self.on_finish_message)
+        matb_dispatcher.map("/workload", self.on_workload_message)
+        self.server = osc_server.ThreadingOSCUDPServer(("127.0.0.3", 5005), matb_dispatcher)
+        print("OpenMATB serving on {}".format(self.server.server_address))
+        thread = threading.Thread(target=self.server.serve_forever)
+        thread.start()
+
+    def stop_server(self):
+        print("Stopping Server OpenMATB")
+        if self.server:
+            self.server.shutdown()
+            self.server.server_close()
+            self.server = None
+            print("Server OpenMATB stopped")
+        else:
+            print("Server is not running")
+
+    def on_finish_message(self, address, *args):
+        if address == "/conditionfinish":
+            finish = args[0]
+            if finish and self.condition != "practice":
+                print("test")
+                self.count_time += 720
+                self.scenariotime = self.count_time
+                print(self.count_time)
+                print(self.scenariotime)
+
+    def on_workload_message(self, address, *args):
+        if address == "/workload":
+            workload = args[0]
+            self.condition = args[1]
+            """match workload:
+                case "None":
+                    self.move_scenariotime(0)
+                case "Moderate":
+                    self.scenariotime = 600
+                case "Strong":
+                    self.scenariotime = 1800"""

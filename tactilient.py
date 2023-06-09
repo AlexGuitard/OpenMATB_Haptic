@@ -2,6 +2,7 @@ import subprocess
 import sys
 import threading
 
+import pyglet.canvas
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Signal, QObject, Slot, QThread
 from PySide6.QtGui import QPixmap, QFont
@@ -79,6 +80,7 @@ class Tactilient(QMainWindow):
         self.text_value.setVisible(False)
         self.response.setVisible(False)
         self.text_response.setVisible(False)
+        self.label_practice.setVisible(False)
 
         self.server = None
 
@@ -106,12 +108,14 @@ class Tactilient(QMainWindow):
         self.text_value.setVisible(True)
         self.response.setVisible(True)
         self.text_response.setVisible(True)
+        self.label_practice.setVisible(True)
 
     def hideHints(self):
         self.value.setVisible(False)
         self.text_value.setVisible(False)
         self.response.setVisible(False)
         self.text_response.setVisible(False)
+        self.label_practice.setVisible(False)
 
     def clearValues(self):
         self.text_response.setText('')
@@ -136,23 +140,23 @@ class Tactilient(QMainWindow):
                 pyside_window.show()
 
     def start_server(self):
-        print("Starting Server")
+        print("Starting Server OpenMATB-Tactilient")
         dispatcher = Dispatcher()
         dispatcher.map("/value", self.update_trial)
         dispatcher.map("/condition", self.init_practice_mode)
         dispatcher.map("/minimize", self.minimize_window)
         self.server = osc_server.ThreadingOSCUDPServer(("127.0.0.3", 5001), dispatcher)
-        print("Serving on {}".format(self.server.server_address))
+        print("OpenMATB-Tactilient serving on {}".format(self.server.server_address))
         thread = threading.Thread(target=self.server.serve_forever)
         thread.start()
 
     def stop_server(self):
-        print("Stopping Server")
+        print("Stopping Server OpenMATB-Tactilient")
         if self.server:
             self.server.shutdown()
             self.server.server_close()
             self.server = None
-            print("Server stopped")
+            print("Server OpenMATB-Tactilient stopped")
         else:
             print("Server is not running")
 
@@ -203,7 +207,7 @@ if __name__ == "__main__":
     signal_handler.close_signal.connect(app.quit)
     signal_handler.close_signal.connect(process_thread.quit)
     signal_handler.close_signal.connect(process_thread.wait)
-
+    
     process_thread.finished.connect(signal_handler.close_window)
     process_thread.start()
 

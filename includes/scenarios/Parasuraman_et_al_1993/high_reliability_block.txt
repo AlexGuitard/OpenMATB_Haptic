@@ -117,6 +117,8 @@
 # 3.c. Tracking events
 # Empty
 
+0:09:58;genericscales;filename;nasatlx_fr.txt
+0:09:58;genericscales;start
 
 # 4. End tasks at 10 minutes
 

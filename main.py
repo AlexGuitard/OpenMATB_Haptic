@@ -5,9 +5,13 @@
 # License : CeCILL, version 2.1 (see the LICENSE file)
 
 import gettext, configparser
+import threading
 from pathlib import Path
 
 # Read the configuration file
+from pythonosc import osc_server
+from pythonosc.dispatcher import Dispatcher
+
 config = configparser.ConfigParser()
 config.read("config.ini")
 
@@ -53,7 +57,9 @@ class OpenMATB:
         self.scheduler = Scheduler(scenario.events, scenario.plugins, window,
                                    config['Openmatb']['clock_speed'],
                                    display_session_number)
+        self.scheduler.start_server()
         self.scheduler.run()
+
 
 if __name__ == '__main__':
     app = OpenMATB()

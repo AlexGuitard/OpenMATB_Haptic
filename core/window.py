@@ -1,8 +1,8 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
-import time
 
+import pyglet.window
 from PySide6.QtCore import QCoreApplication
 from pyglet import font
 from pyglet.canvas import get_display
@@ -10,7 +10,9 @@ from pyglet.window import Window, key as winkey
 from pyglet.graphics import Batch
 from pyglet.gl import GL_POLYGON
 from pyglet.text import Label
-from pythonosc import udp_client
+from pythonosc import udp_client, osc_server
+from pythonosc.dispatcher import Dispatcher
+from time import perf_counter
 
 from core.container import Container
 from core.constants import COLORS as C, FONT_SIZES as F, Group as G, PLUGIN_TITLE_HEIGHT_PROPORTION
@@ -63,7 +65,7 @@ class Window(Window):
 
         super().__init__(fullscreen=self._fullscreen, width=self._width, height=self._height, vsync=True, *args, **kwargs)
 
-        self.set_size_and_location() # Postpone multiple monitor support
+        self.set_size_and_location()  # Postpone multiple monitor support
         self.set_mouse_visible(replay_mode)
 
         self.batch = Batch()
@@ -141,12 +143,13 @@ class Window(Window):
             return
 
         keystr = winkey.symbol_string(symbol)
+        time_send = perf_counter()
         self.keyboard[keystr] = True  # KeyStateHandler
 
         if keystr == 'ESCAPE':
             self.exit_prompt()
-        #elif keystr == 'P':
-            #self.pause_prompt()
+        elif keystr == 'E':
+            self.pause_prompt()
 
         if self.replay_mode:
             if self.on_key_press_replay != None:
@@ -154,12 +157,12 @@ class Window(Window):
             return
 
         if keystr in self.keys_tactilient:
-            self.send_key_press(keystr)
+            self.send_key_press(keystr, time_send)
 
         logger.record_input('keyboard', keystr, 'press')
 
-    def send_key_press(self, key):
-        self.client.send_message("/keypress", [key, time.perf_counter()])
+    def send_key_press(self, key, time):
+        self.client.send_message("/keypress", [key, time])
 
     def on_key_release(self, symbol, modifiers):
         if self.modal_dialog is not None:
