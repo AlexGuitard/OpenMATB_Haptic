@@ -31,6 +31,21 @@ class Simpletext(AbstractWidget):
         self.vertex['text'].text = text
         self.logger.record_state(self.name, 'text', text)
 
+    def set_bold(self, bold):
+        if bold == self.get_bold():
+            return
+        self.vertex['text'].bold = bold
+
+    def set_font_size(self, font_size):
+        if font_size == self.get_font_size():
+            return
+        self.vertex['text'].font_size = font_size
+
+    def get_font_size(self):
+        return self.vertex['text'].font_size
 
     def get_text(self):
         return self.vertex['text'].text
+
+    def get_bold(self):
+        return self.vertex['text'].bold

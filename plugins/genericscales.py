@@ -14,7 +14,7 @@ class Genericscales(BlockingPlugin):
 
         self.folder = P['QUESTIONNAIRES']
         new_par = dict(filename=None, pointsize=0, maxdurationsec=0, 
-                       response=dict(text=_('Press SPACE to validate'), key='SPACE'),
+                       response=dict(text=_('Please wait'), key='SPACE'),
                        allowkeypress=True)
         self.sliders = dict()
         self.parameters.update(new_par)

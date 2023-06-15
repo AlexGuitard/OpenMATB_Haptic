@@ -1,6 +1,7 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
+import threading
 
 import pyglet.window
 from PySide6.QtCore import QCoreApplication
@@ -41,7 +42,6 @@ class Window(Window):
             errors.add_error(_(f"In config.ini, the specified screen index exceeds the number of available screens (%s). Last screen selected.") % len(get_display().get_screens()))
         else:
             screen = screens[screen_index]
-
 
         # Font definition
         # Font check
@@ -86,6 +86,8 @@ class Window(Window):
         self.client = udp_client.SimpleUDPClient(self.tactilient_id, self.tactilient_port)
         self.keys_tactilient = ['A', 'S', 'C', 'T', 'H', 'COMMA', 'P', 'user_key(c0)', 'RSHIFT']
 
+        self.global_time_send = None
+        self.test_send = None
 
     def is_in_replay_mode(self):
         return self.replay_mode is True
@@ -139,12 +141,15 @@ class Window(Window):
 
     # Log any keyboard input, either plugins accept it or not
     def on_key_press(self, symbol, modifiers):
+
         if self.modal_dialog is not None:
             return
 
         keystr = winkey.symbol_string(symbol)
         time_send = perf_counter()
         self.keyboard[keystr] = True  # KeyStateHandler
+
+        self.global_time_send = time_send
 
         if keystr == 'ESCAPE':
             self.exit_prompt()
@@ -157,14 +162,16 @@ class Window(Window):
             return
 
         if keystr in self.keys_tactilient:
-            self.send_key_press(keystr, time_send)
+            self.send_key_press(keystr, self.global_time_send)
         if keystr != "user_key(af)":
-            logger.record_input('keyboard', keystr, 'press')
+            logger.record_input('keyboard', keystr, 'press', self.global_time_send)
+        print(self.global_time_send)
 
     def send_key_press(self, key, time):
         self.client.send_message("/keypress", [key, time])
 
     def on_key_release(self, symbol, modifiers):
+        time_send = perf_counter()
         if self.modal_dialog is not None:
             self.modal_dialog.on_key_release(symbol, modifiers)
             return
@@ -172,7 +179,7 @@ class Window(Window):
         keystr = winkey.symbol_string(symbol)
         self.keyboard[keystr] = False  # KeyStateHandler
         if keystr != "user_key(af)":
-            logger.record_input('keyboard', keystr, 'release')
+            logger.record_input('keyboard', keystr, 'release', time_send)
 
 
     def exit_prompt(self):

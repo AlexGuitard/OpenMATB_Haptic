@@ -115,9 +115,6 @@ class Scenario:
         if len(event_errors) > 0:
             errors.add_error(_(f"There were some errors in the scenario. See the %s file.") % P['SCENARIO_ERRORS'].name, fatal = True)
 
-        print(self.events)
-
-
     def events_retrocompatibility(self):
         new_list = list()
         for n, e in enumerate(self.events):

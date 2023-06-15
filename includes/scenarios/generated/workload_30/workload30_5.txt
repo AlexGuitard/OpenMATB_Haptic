@@ -1,0 +1,29 @@
+# Name:workload30_5
+# Technical load = 30.0 %
+0:00:00;tactonsinfo;start
+0:00:00;track;start
+0:00:00;track;targetproportion;0.7
+0:00:00;communications;start
+0:00:32;communications;radioprompt;own
+0:00:51;communications;radioprompt;other
+0:01:44;communications;radioprompt;own
+0:02:16;communications;radioprompt;other
+0:02:33;communications;radioprompt;other
+0:03:45;communications;radioprompt;own
+0:04:38;communications;radioprompt;other
+0:05:03;communications;radioprompt;own
+0:05:29;communications;radioprompt;own
+0:06:07;communications;radioprompt;own
+0:07:03;communications;radioprompt;own
+0:07:24;communications;radioprompt;other
+0:07:52;communications;radioprompt;other
+0:11:16;communications;radioprompt;other
+0:00:00;resman;start
+0:00:00;resman;tank-a-lossperminute;360
+0:00:00;resman;tank-b-lossperminute;360
+0:12:00;genericscales;filename;nasatlx_fr.txt
+0:12:00;genericscales;start
+0:12:00;track;stop
+0:12:00;resman;stop
+0:12:00;communications;stop
+0:12:00;tactonsinfo;stop

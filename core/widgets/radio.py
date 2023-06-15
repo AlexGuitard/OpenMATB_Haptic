@@ -17,10 +17,10 @@ class Radio(AbstractWidget):
         self.is_selected = on
 
         # Radio label #
-        self.vertex['radio_frequency'] = Label(self.get_frequency_string(frequency), font_size=F['SMALL'],
+        self.vertex['radio_frequency'] = Label(self.get_frequency_string(frequency), font_size=F['MEDIUM'],
                                                x=self.container.cx, y=self.container.cy, font_name=self.font_name,
                                                anchor_x='center', anchor_y='center',
-                                               color=C['BLACK'], batch=self.win.batch, group=G(self.m_draw+1))
+                                               color=C['BLACK'], batch=self.win.batch, group=G(self.m_draw+1), bold=True)
 
         # Arrows vertices #
         # Only a change in vertices is needed to show/hide arrows --> (0, 0, 0...) = hide

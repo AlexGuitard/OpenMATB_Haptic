@@ -1,8 +1,12 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
+import os
 import threading
-from sys import exit
+
+import pygetwindow
+import win32gui
+from pywinauto import Desktop
 from pyglet.app import EventLoop
 from pythonosc import osc_server
 from pythonosc.dispatcher import Dispatcher
@@ -14,6 +18,7 @@ from core.logger import logger
 
 import pyglet.clock
 import sys
+
 
 class Scheduler:
     """
@@ -72,12 +77,10 @@ class Scheduler:
             self.win.modal_dialog = ModalDialog(self.win, msg, title='Session ID')
             self.display_session_number = False
 
-
         # Update timers with dt
         if not self.is_scenario_time_paused():
             self.scenariotime += dt
             logger.set_scenariotime(self.scenariotime)
-
 
         # Detect a potential blocking plugin
         active_blocking_plugin = self.get_active_blocking_plugin()
@@ -103,7 +106,6 @@ class Scheduler:
                 self.paused_plugins = list()
             self.pause_scenario_time = False
 
-
         # Check if there are active plugins...
         ap = self.get_active_plugins()
 
@@ -121,24 +123,19 @@ class Scheduler:
         # else:
         #    self.move_scenario_time_to(0) # in replay restart
 
-
     def is_scenario_time_paused(self):
         return self.pause_scenario_time is True
-
 
     def get_active_blocking_plugin(self):
         p = self.get_plugins_by_states([('blocking', True), ('paused', False)])
         if len(p) > 0:
             return p[0]
 
-
     def get_active_non_blocking_plugins(self):
         return self.get_plugins_by_states([('blocking', False), ('paused', False)])
 
-
     def get_active_plugins(self):
         return self.get_plugins_by_states([('alive', True)])
-
 
     def execute_one_event(self, event):
         # IDEA : the event could be scheduled (immediately) by the plugin clock
@@ -164,7 +161,6 @@ class Scheduler:
         # constant all along it
         logger.record_event(event)
 
-
     def execute_plugins_methods(self, plugins, methods):
         if len(plugins) == 0:
             return
@@ -176,18 +172,16 @@ class Scheduler:
             for p in plugins:
                 self.execute_one_event(Event(0, 0, p.alias, m))
 
-
     def get_plugins_by_states(self, attribute_state_list):
-        plugins = {k:p for k,p in self.plugins.items()}
+        plugins = {k: p for k, p in self.plugins.items()}
         for (attribute, state) in attribute_state_list:
-            plugins = {k:p for k,p in plugins.items() if getattr(p, attribute) == state}
-        return [p for _,p in plugins.items()]
-
+            plugins = {k: p for k, p in plugins.items() if getattr(p, attribute) == state}
+        return [p for _, p in plugins.items()]
 
     def get_event_at_scenario_time(self, scenario_time: float):
         if self.win.replay_mode and scenario_time > self.target_time:
-           self.scenario_clock.pause('replay')
-           return self.unqueue_event()
+            self.scenario_clock.pause('replay')
+            return self.unqueue_event()
 
         # Retrieve (simultaneous) events matching scenario_duration_sec
         # We look to the most precise point in the near future that might matches a set of event time(s)
@@ -210,7 +204,6 @@ class Scheduler:
 
         return self.unqueue_event()
 
-
     def unqueue_event(self):
         # If some events must be executed, unstack the next event
         if len(self.events_queue) > 0:
@@ -219,7 +212,6 @@ class Scheduler:
             return event
 
         return None
-
 
     def move_scenario_time_to(self, time: float):
         if time < self.scenario_clock.get_time():
@@ -233,7 +225,6 @@ class Scheduler:
             self.initialize_plugins()
 
             self.scenario_clock.set_time(0)
-
 
         # moving forward
         replay_acceleration_factor = 100
@@ -249,11 +240,11 @@ class Scheduler:
                 self.plugins[plugin].scenariotime = time
                 self.target_time = time
                 self.plugins[plugin].next_refresh_time = time
-                #print(self.plugins[plugin].alias)
-                #print(self.plugins[plugin].next_refresh_time)
+                # print(self.plugins[plugin].alias)
+                # print(self.plugins[plugin].next_refresh_time)
 
-            #for event in self.events:
-                #event.done = False
+            # for event in self.events:
+            # event.done = False
 
         events_time = [event for event in self.events if event.done != 1]
 
@@ -265,19 +256,16 @@ class Scheduler:
         self.scenario_clock.resume('replay')
         self.target_time = target_time
 
-
     def stop_scenario(self):
         # TODO: check if remaining events
         self.scenario_clock.pause('replay')
 
-
     def exit(self):
         logger.log_manual_entry('end')
         self.event_loop.exit()
-        self.win.close()
         self.stop_server()
+        self.win.close()
         sys.exit(0)
-
 
     def run(self):
         self.event_loop.run()
@@ -287,6 +275,8 @@ class Scheduler:
         matb_dispatcher = Dispatcher()
         matb_dispatcher.map("/conditionfinish", self.on_finish_message)
         matb_dispatcher.map("/workload", self.on_workload_message)
+        matb_dispatcher.map("/next", self.block_rcvd)
+        matb_dispatcher.map("/stop", self.on_stop)
         self.server = osc_server.ThreadingOSCUDPServer(("127.0.0.3", 5005), matb_dispatcher)
         print("OpenMATB serving on {}".format(self.server.server_address))
         thread = threading.Thread(target=self.server.serve_forever)
@@ -296,7 +286,7 @@ class Scheduler:
         print("Stopping Server OpenMATB")
         if self.server:
             self.server.shutdown()
-            self.server.server_close()
+            #self.server.server_close()
             self.server = None
             print("Server OpenMATB stopped")
         else:
@@ -305,8 +295,7 @@ class Scheduler:
     def on_finish_message(self, address, *args):
         if address == "/conditionfinish":
             finish = args[0]
-            #and self.condition != "practice"
-            if finish:
+            if finish and self.condition != "practice":
                 self.count_time += 720
                 self.scenariotime = self.count_time
 
@@ -321,3 +310,26 @@ class Scheduler:
                     self.scenariotime = 600
                 case "Strong":
                     self.scenariotime = 1800"""
+
+    def block_rcvd(self, address, *args):
+        if address == '/next':
+            next_b = args[0]
+            self.let_focus("main.py")
+            if next_b:
+                plugin = self.get_active_blocking_plugin()
+                if plugin is not None:
+                    plugin.do_next()
+
+    def on_stop(self, address, *args):
+        if address == "/stop":
+            stop_expe = args[0]
+            if stop_expe:
+                self.exit()
+
+    def let_focus(self, window_name):
+        desktop = Desktop(backend="uia").window(title=window_name)
+        if desktop.exists():
+            print("Avant test")
+            desktop.set_focus()
+        else:
+            print(f"Aucune fenêtre avec le nom '{window_name}' n'a été trouvée.")

@@ -1,10 +1,11 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
-
+import threading
 from pathlib import Path
 from pyglet.window import key as winkey
-from pythonosc import udp_client
+from pythonosc import udp_client, osc_server
+from pythonosc.dispatcher import Dispatcher
 
 from core.widgets import Simpletext, SimpleHTML, Frame
 from core.constants import *
@@ -462,6 +463,10 @@ class BlockingPlugin(AbstractPlugin):
 
     def send_local_message(self, minimize):
         self.client_local.send_message("/minimize", minimize)
+
+    def do_next(self):
+        self.go_to_next_slide = True
+        self.send_local_message(False)
 
 # TODO : Include a Solver class like
 # ~ """

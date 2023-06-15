@@ -12,57 +12,67 @@
 0:00:00;communications;start
 
 # Présentation de la Poursuite
-0:00:10;resman;hide
-0:00:10;resman;pause
-0:00:10;communications;hide
-0:00:10;communications;pause
-0:00:10;scheduling;hide
-0:00:10;scheduling;pause
-0:00:10;instructions;filename;default/track.txt
-0:00:10;instructions;start
-0:00:10;track;targetproportion;0.6842105263157895
-0:01:10;track;targetproportion;0.21052631578947367
+0:00:05;resman;hide
+0:00:05;resman;pause
+0:00:05;communications;hide
+0:00:05;communications;pause
+0:00:05;scheduling;hide
+0:00:05;scheduling;pause
+0:00:05;instructions;filename;default/track.txt
+0:00:05;instructions;start
+0:00:05;track;targetproportion;0.7
+0:00:30;track;targetproportion;0.19999999999999996
 
 #Presentation de la communications
-0:02:10;communications;show
-0:02:10;communications;resume
-0:02:10;track;hide
-0:02:10;track;pause
-0:02:10;instructions;filename;default/communications.txt
-0:02:10;instructions;start
-0:02:15;communications;radioprompt;own
-0:02:50;communications;radioprompt;other
+0:00:50;communications;show
+0:00:50;communications;resume
+0:00:50;track;hide
+0:00:50;track;pause
+0:00:50;instructions;filename;default/communications.txt
+0:00:50;instructions;start
+0:01:00;communications;radioprompt;own
+0:01:20;communications;radioprompt;other
 
 # Présentation du Resman
-0:03:30;resman;show
-0:03:30;resman;resume
-0:03:30;communications;hide
-0:03:30;communications;pause
-0:03:30;instructions;filename;default/resman.txt
-0:03:30;instructions;start
-0:03:35;resman;tank-a-lossperminute;378
-0:03:35;resman;tank-b-lossperminute;378
-0:04:15;resman;tank-a-lossperminute;947
-0:04:15;resman;tank-b-lossperminute;947
+0:02:00;resman;show
+0:02:00;resman;resume
+0:02:00;communications;hide
+0:02:00;communications;pause
+0:02:00;instructions;filename;default/resman.txt
+0:02:00;instructions;start
+0:02:00;resman;tank-a-lossperminute;360
+0:02:00;resman;tank-b-lossperminute;360
+0:02:30;resman;tank-a-lossperminute;960
+0:02:30;resman;tank-b-lossperminute;960
 
-0:05:00;scheduling;show
-0:05:00;scheduling;resume
-0:05:00;instructions;filename;default/scheduling.txt
-0:05:00;instructions;start
+0:03:00;scheduling;show
+0:03:00;scheduling;resume
+0:03:00;instructions;filename;default/scheduling.txt
+0:03:00;instructions;start
 
-0:05:15;track;show
-0:05:15;track;resume
-0:05:15;communications;show
-0:05:15;communications;resume
-0:05:15;instructions;filename;default/full.txt
-0:05:15;instructions;start
+0:03:00;track;show
+0:03:00;track;resume
+0:03:00;communications;show
+0:03:00;communications;resume
+0:03:00;instructions;filename;default/full.txt
+0:03:00;instructions;start
 
-0:05:40;communications;radioprompt;own
-0:06:30;communications;radioprompt;other
+0:03:00;track;targetproportion;0.7
+0:04:00;track;targetproportion;0.19999999999999996
 
-0:07:00;tactonsinfo;stop
-0:07:00;track;stop
-0:07:00;communications;stop
-0:07:00;resman;stop
-0:07:00;scheduling;stop
+0:03:00;resman;tank-a-lossperminute;360
+0:03:00;resman;tank-b-lossperminute;360
+0:04:00;resman;tank-a-lossperminute;960
+0:04:00;resman;tank-b-lossperminute;960
+
+0:03:35;communications;radioprompt;own
+0:03:55;communications;radioprompt;other
+0:04:15;communications;radioprompt;other
+0:04:40;communications;radioprompt;own
+
+0:05:00;tactonsinfo;stop
+0:05:00;track;stop
+0:05:00;communications;stop
+0:05:00;resman;stop
+0:05:00;scheduling;stop
 

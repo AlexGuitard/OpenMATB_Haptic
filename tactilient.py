@@ -1,10 +1,14 @@
 import subprocess
 import sys
 import threading
+import time
 
-import pyglet.canvas
+import pygetwindow
+from pywinauto import Desktop
+from pynput import mouse
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtCore import Signal, QObject, Slot, QThread
+from PySide6.QtCore import Signal, QObject, Slot, QThread, QUrl
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from pythonosc import osc_server
@@ -22,10 +26,21 @@ class Tactilient(QMainWindow):
     def __init__(self):
         super(Tactilient, self).__init__()
 
+        self.setWindowTitle("Test")
+
         self.pixmap = QPixmap(file)
         self.pixmap = self.pixmap.scaled(780, 320)
 
         layout = QtWidgets.QVBoxLayout()
+
+        # Point focus
+        self.point_label = QLabel(self)
+        self.point_label.setFixedSize(20, 20)
+        self.point_label.setStyleSheet("background-color: green; border-radius: 10px")
+        self.point_label.setVisible(True)
+        layout.addWidget(self.point_label, alignment=QtCore.Qt.AlignRight)
+
+        #image tactons
         self.label = QLabel(self)
         self.label.setPixmap(self.pixmap)
         self.setStyleSheet("background-color: #f0f0f0;")
@@ -72,11 +87,12 @@ class Tactilient(QMainWindow):
 
         self.resize(803, 486)
         self.move(0, 54)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint)
+        self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         self.setCursor(QtCore.Qt.BlankCursor)
-        self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
-        self.setWindowFlag(QtCore.Qt.WindowMaximizeButtonHint, False)
-        self.setWindowFlag(QtCore.Qt.WindowMinimizeButtonHint, False)
-        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowCloseButtonHint, False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowMaximizeButtonHint, False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowMinimizeButtonHint, False)
 
         self.value.setVisible(False)
         self.text_value.setVisible(False)
@@ -84,17 +100,59 @@ class Tactilient(QMainWindow):
         self.text_response.setVisible(False)
         self.label_practice.setVisible(False)
 
+        filename = "C:/Users/Airtius6DOF/Documents/OpenMATB_Haptic/includes/sounds/Noise/Pink_noise.mp3"
+        self.player = QMediaPlayer()
+        self.audio_output = QAudioOutput()
+        self.player.setAudioOutput(self.audio_output)
+        self.player.setSource(QUrl.fromLocalFile(filename))
+        self.player.mediaStatusChanged.connect(self.handleMediaStatusChanged)
+        self.audio_output.setVolume(0.10)
+        self.player.play()
+
         self.server = None
 
         monitors = get_monitors()
         if len(monitors) > 1:
-            # Utiliser le deuxième écran (index 1)
-            screen = monitors[1]
-            window_x = screen.x
-            window_y = screen.y + 80
-            self.move(window_x, window_y)
+            for screen in monitors:
+                if not screen.is_primary:
+                    window_x = screen.x
+                    window_y = screen.y + 80
+                    self.move(window_x, window_y)
 
         self.show_hints_signal.connect(self.showHints)
+        self.show()
+        self.listener = mouse.Listener(on_click=self.on_click)
+        self.listener.start()
+
+    def on_click(self, x, y, button, pressed):
+        if pressed:
+            time.sleep(2.5)
+            self.window_focus("main.py")
+
+    """def window_focus(self, window_name):
+        print("test")
+        desktop = Desktop(backend="uia").window(title=window_name)
+        if desktop.is_active():
+            self.point_label.setStyleSheet("background-color: green; border-radius: 10px")
+            print("focus matb")
+        else:
+            self.point_label.setStyleSheet("background-color: red; border-radius: 10px")
+            print("focus out")"""
+
+    def window_focus(self, window_name):
+        print("test")
+        window = pygetwindow.getWindowsWithTitle(window_name)
+        if len(window) > 0 and window[0].isActive:
+            self.point_label.setStyleSheet("background-color: green; border-radius: 10px")
+            print("focus matb")
+        else:
+            self.point_label.setStyleSheet("background-color: red; border-radius: 10px")
+            print("focus out")
+
+    def handleMediaStatusChanged(self, status):
+        if status == QMediaPlayer.EndOfMedia:
+            self.player.setPosition(0)
+            self.player.play()
 
     def update_trial(self, address, *args):
         if address == "/value":
@@ -179,8 +237,11 @@ class SignalHandler(QObject):
     def close_window(self):
         if not self.window_closed:
             self.window_closed = True
+            pyside_window.listener.stop()
+            time.sleep(3)
             pyside_window.close()
             pyside_window.stop_server()
+            pyside_window.player.stop()
             app.quit()
 
 
@@ -199,15 +260,19 @@ class ProcessWatcher(QObject):
 
 
 class ProcessThread(QThread):
+    value = sys.stdin.readline().rstrip()
+
     def run(self):
-        process = subprocess.Popen(["python", "main.py"])
+        process = subprocess.Popen(["python", "main.py"], stdin=subprocess.PIPE)
+        process.stdin.write(self.value.encode('utf-8'))
+        process.stdin.close()
         process.wait()
 
 
 if __name__ == "__main__":
     app = QApplication([])
     pyside_window = Tactilient()
-    pyside_window.show()
+    #pyside_window.show()
     pyside_window.start_server()
 
     signal_handler = SignalHandler()

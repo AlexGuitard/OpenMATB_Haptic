@@ -3,7 +3,7 @@
 0:00:00;tactonsinfo;start
 0:00:00;track;start
 0:00:00;resman;start
-#0:00:00;communications;start
+0:00:00;communications;start
 0:00:00;scheduling;start
 
 0:00:05;resman;automaticsolver;True

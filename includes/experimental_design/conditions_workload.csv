@@ -1,0 +1,13 @@
+combination;location;turbulence;workload
+A;Hand;None;None
+B;Hand;None;Moderate
+C;Hand;None;Strong
+D;Hand;Uncomfortable;None
+E;Hand;Uncomfortable;Moderate
+F;Hand;Uncomfortable;Strong
+G;Wrist;None;None
+H;Wrist;None;Moderate
+I;Wrist;None;Strong
+J;Wrist;Uncomfortable;None
+K;Wrist;Uncomfortable;Moderate
+L;Wrist;Uncomfortable;Strong

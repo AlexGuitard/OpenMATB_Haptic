@@ -5,9 +5,11 @@
 # License : CeCILL, version 2.1 (see the LICENSE file)
 
 import gettext, configparser
+import sys
 import threading
 from pathlib import Path
 
+import pygetwindow
 # Read the configuration file
 from pythonosc import osc_server
 from pythonosc.dispatcher import Dispatcher
@@ -45,11 +47,16 @@ class OpenMATB:
     def __init__(self):
         # The MATB window must be bordeless (in non-fullscreen mode)
         window = Window(screen_index=config['Openmatb']['screen_index'], font_name=config['Openmatb']['font_name'],
-                        fullscreen=fullscreen, replay_mode=False,
-                        style=Window.WINDOW_STYLE_BORDERLESS, highlight_aoi=highlight_aoi,
+                        fullscreen=fullscreen, replay_mode=False, highlight_aoi=highlight_aoi,
                         hide_on_pause=hide_on_pause)
 
-        scenario_path = P['SCENARIOS'].joinpath(config['Openmatb']['scenario_path'])
+        val = sys.stdin.readline().rstrip()
+
+        if val != '':
+            scenario_path = P['SCENARIOS'].joinpath(val)
+        else:
+            scenario_path = P['SCENARIOS'].joinpath(config['Openmatb']['scenario_path'])
+
         scenario = Scenario(scenario_path, window)
 
         errors.show_errors()
@@ -57,6 +64,7 @@ class OpenMATB:
         self.scheduler = Scheduler(scenario.events, scenario.plugins, window,
                                    config['Openmatb']['clock_speed'],
                                    display_session_number)
+
         self.scheduler.start_server()
         self.scheduler.run()
 

@@ -58,8 +58,8 @@ class Logger:
         self.write_single_slot(slot)
 
 
-    def record_input(self, module, key, state):
-        slot = [perf_counter(), self.scenariotime, 'input', module, key, state]
+    def record_input(self, module, key, state, time):
+        slot = [time, self.scenariotime, 'input', module, key, state]
         self.write_single_slot(slot)
 
 

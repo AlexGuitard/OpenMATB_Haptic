@@ -13,7 +13,7 @@ from pyglet.media import Player, SourceGroup, load
 from plugins.abstract import AbstractPlugin
 from core.widgets import Radio, Simpletext
 from core.container import Container
-from core.constants import PATHS as P, COLORS as C
+from core.constants import PATHS as P, COLORS as C, F
 
 
 class Communications(AbstractPlugin):
@@ -75,7 +75,8 @@ class Communications(AbstractPlugin):
     def create_widgets(self):
         super().create_widgets()
         self.add_widget('callsign', Simpletext, container=self.task_container,
-                        text=_('Callsign \t\t %s') % self.parameters['owncallsign'], y=0.9)
+                        text=_('Callsign \t\t %s') % self.parameters['owncallsign'], y=0.9, font_size=F['MEDIUM'],
+                        bold=True)
 
         active_index = randint(0, len(self.parameters['radios']) - 1)
         for pos, radio in self.parameters['radios'].items():
@@ -239,7 +240,7 @@ class Communications(AbstractPlugin):
                 self.prompt_for_a_new_target(self.parameters['radioprompt'].lower(),
                                              radio_name_to_prompt)
             else:
-                self.log_manual_entry('Error. Could not trigger prompt', key='manual')
+                self.logger.log_manual_entry('Error. Could not trigger prompt', key='manual')
 
         if self.can_receive_keys == True:
             self.modulate_frequency()
