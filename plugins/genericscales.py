@@ -1,6 +1,7 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
+import pyglet
 
 from plugins.abstract import BlockingPlugin
 from core.widgets import Simpletext, Slider, Frame
@@ -25,7 +26,8 @@ class Genericscales(BlockingPlugin):
         self.question_height_ratio = 0.1  # question + response slider
         self.question_interspace = 0.05  # Space to leave between two questions
         self.top_to_top = self.question_interspace + self.question_height_ratio
-    
+
+        self.current_slider = None
     
     def make_slide_graphs(self):
         super().make_slide_graphs()
@@ -57,15 +59,33 @@ class Genericscales(BlockingPlugin):
                                 draw_order=self.m_draw)
             
                 self.sliders[f'slider_{l+1}'] = self.add_widget(f'slider_{l+1}', Slider, 
-                                container=slider_container,
+                                container=slider_container, parent=self,
                                 title=title, label_min=label_min, label_max=label_max,
                                 value_min=value_min, value_max=value_max, 
                                 value_default=value_default, rank=l, draw_order=self.m_draw+3)
+                if l == 0:
+                    self.current_slider = self.sliders['slider_1']
+                    self.current_slider.set_auto_focus()
+        print(self.sliders)
     
     def stop(self):
         for slider_name, slider_widget in self.sliders.items():
             self.log_performance(slider_widget.get_title(), slider_widget.get_value())
         self.send_local_message(False)
         super().stop()
-        
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.TAB and self.current_slider is not None:
+            self.focus_next_slider()
+
+    def focus_next_slider(self):
+        current_rank = self.current_slider.rank
+        next_rank = (current_rank + 1) % len(self.sliders)
+
+        next_slider_name = f'slider_{next_rank + 1}'
+        next_slider = self.sliders.get(next_slider_name)
+        if next_slider is not None:
+            self.current_slider.remove_focus()
+            self.current_slider = next_slider
+            self.current_slider.set_auto_focus()
 

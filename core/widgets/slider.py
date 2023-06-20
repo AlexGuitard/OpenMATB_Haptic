@@ -11,10 +11,11 @@ from pyglet.text import Label
 
 
 class Slider(AbstractWidget):
-    def __init__(self, name, container, win, title, label_min, label_max,
+    def __init__(self, name, container, win, parent, title, label_min, label_max,
                  value_min, value_max, value_default, rank, draw_order=1):
         super().__init__(name, container, win)
 
+        self.focus = False
         self.title = title
         self.label_min = label_min
         self.label_max = label_max
@@ -45,8 +46,15 @@ class Slider(AbstractWidget):
         self.show()
         #self.update()
 
+        self.key_pressed = False
+        self.key_action = None
+
         self.win.push_handlers(self.on_mouse_press, self.on_mouse_drag,
-                               self.on_mouse_release)
+                               self.on_mouse_release, self.on_key_press, self.on_key_release)
+
+        pyglet.clock.schedule_interval(self.update_value, 1 / 10)
+
+        self.tab_index = None
 
 
     #def set_main_container(self, y, width, height):
@@ -156,6 +164,28 @@ class Slider(AbstractWidget):
             ratio = (x - x_min) / (x_max - x_min)
             self.update_groove_value(ratio)
 
+    def on_key_press(self, symbol, modifiers):
+        print(self.rank)
+        print(self.focus)
+        if self.focus:
+            if symbol == pyglet.window.key.LEFT:
+                self.key_pressed = True
+                self.key_action = 'LEFT'
+            elif symbol == pyglet.window.key.RIGHT:
+                self.key_pressed = True
+                self.key_action = 'RIGHT'
+
+    def on_key_release(self, symbol, modifiers):
+        if symbol in [pyglet.window.key.LEFT, pyglet.window.key.RIGHT]:
+            self.key_pressed = False
+
+    def update_value(self, dt):
+        if self.key_pressed:
+            if self.key_action == 'LEFT':
+                self.groove_value = max(self.groove_value - 1, self.value_min)
+            elif self.key_action == 'RIGHT':
+                self.groove_value = min(self.groove_value + 1, self.value_max)
+            self.update()
 
     def update_groove_value(self, ratio):
         new_value = int(round(ratio * (self.value_max - self.value_min) + self.value_min))
@@ -189,6 +219,13 @@ class Slider(AbstractWidget):
         super().hide()
         self.win.slider_visible = False
 
+    def set_auto_focus(self):
+        self.focus = True
+        self.update_cursor_appearance()
+
+    def remove_focus(self):
+        self.focus = False
+        self.update_cursor_appearance()
 
     def show(self):
         super().show()

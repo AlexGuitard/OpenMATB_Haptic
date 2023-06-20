@@ -21,6 +21,8 @@
 0:00:00;resman;start
 0:00:00;resman;tank-a-lossperminute;360
 0:00:00;resman;tank-b-lossperminute;360
+00:00:00;resman;tank-a-level;2500
+00:00:00;resman;tank-b-level;2500
 0:12:00;genericscales;filename;nasatlx_fr.txt
 0:12:00;genericscales;start
 0:12:00;track;stop

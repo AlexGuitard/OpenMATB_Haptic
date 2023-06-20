@@ -16,7 +16,7 @@ from pythonosc.dispatcher import Dispatcher
 
 from screeninfo import get_monitors
 
-file = "./includes/img/Stimulus_Sansfond.png"
+file = "./includes/img/tactonsInfo_sansFond.png"
 
 
 class Tactilient(QMainWindow):
@@ -106,7 +106,7 @@ class Tactilient(QMainWindow):
         self.player.setAudioOutput(self.audio_output)
         self.player.setSource(QUrl.fromLocalFile(filename))
         self.player.mediaStatusChanged.connect(self.handleMediaStatusChanged)
-        self.audio_output.setVolume(0.10)
+        self.audio_output.setVolume(0.08)
         self.player.play()
 
         self.server = None
@@ -129,18 +129,7 @@ class Tactilient(QMainWindow):
             time.sleep(2.5)
             self.window_focus("main.py")
 
-    """def window_focus(self, window_name):
-        print("test")
-        desktop = Desktop(backend="uia").window(title=window_name)
-        if desktop.is_active():
-            self.point_label.setStyleSheet("background-color: green; border-radius: 10px")
-            print("focus matb")
-        else:
-            self.point_label.setStyleSheet("background-color: red; border-radius: 10px")
-            print("focus out")"""
-
     def window_focus(self, window_name):
-        print("test")
         window = pygetwindow.getWindowsWithTitle(window_name)
         if len(window) > 0 and window[0].isActive:
             self.point_label.setStyleSheet("background-color: green; border-radius: 10px")
@@ -156,12 +145,12 @@ class Tactilient(QMainWindow):
 
     def update_trial(self, address, *args):
         if address == "/value":
-            value = str(args[0])
+            value = 't' + str(args[0])
             response = args[1]
             if response == -1:
                 response = '?'
             else:
-                response = str(response)
+                response = 't' + str(response)
 
             self.text_value.setText(value)
             self.text_response.setText(response)
@@ -170,6 +159,8 @@ class Tactilient(QMainWindow):
                 self.text_response.setStyleSheet("margin-left: 15px; color: green;")
             else:
                 self.text_response.setStyleSheet("margin-left: 15px; color: red;")
+            time.sleep(2)
+            self.clearValues()
 
     def showHints(self):
         self.value.setVisible(True)
@@ -194,6 +185,7 @@ class Tactilient(QMainWindow):
             condition = args[0]
             location = args[1]
             if condition == 'practice':
+                self.clearValues()
                 self.show_hints_signal.emit()
                 self.label_practice.setText(condition + ' ' + 'on' + ' ' + location)
             else:

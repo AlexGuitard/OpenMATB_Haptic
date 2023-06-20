@@ -11,11 +11,11 @@ blocks_directory_30 = "includes/scenarios/generated/workload_30"
 blocks_directory_path = Path(blocks_directory_30)
 input_files_30 = [str(blocks_directory_path.joinpath("workload30_{}.txt".format(i))) for i in range(1, 13)]
 
-blocks_directory_80 = "includes/scenarios/generated/workload_80"
-blocks_directory_path = Path(blocks_directory_80)
-input_files_80 = [str(blocks_directory_path.joinpath("workload80_{}.txt".format(i))) for i in range(1, 13)]
+blocks_directory_70 = "includes/scenarios/generated/workload_70"
+blocks_directory_path = Path(blocks_directory_70)
+input_files_70 = [str(blocks_directory_path.joinpath("workload70_{}.txt".format(i))) for i in range(1, 13)]
 
-input_csv_tri = 'includes/experimental_design/design_expe_workload.csv'
+input_csv_tri = 'includes/experimental_design/wrist_only_19062023.csv'
 csv_data_tri = []
 with open(input_csv_tri, 'r') as file:
     reader = csv.reader(file, delimiter=';')
@@ -41,12 +41,12 @@ order_list = series_order[input_argument]
 
 for letter in order_list:
     match letter:
-        case 'A' | 'D' | 'G' | 'J':
+        case 'A' | 'D':
             input_files.append(input_files_00)
-        case 'B' | 'E' | 'H' | 'K':
+        case 'B' | 'E':
             input_files.append(random.sample(input_files_30, 1))
-        case 'C' | 'F' | 'I' | 'L':
-            input_files.append(random.sample(input_files_80, 1))
+        case 'C' | 'F':
+            input_files.append(random.sample(input_files_70, 1))
 
 print(order_list)
 
@@ -73,7 +73,7 @@ with open(output_file, "w") as output:
                         if not parts[-1].strip().endswith('stop') and not parts[-1].strip().endswith('hide') and not parts[-1].strip().endswith('pause') and not parts[-1].strip().endswith('show') and not parts[-1].strip().endswith('resume'):
                             new_line = ";".join(parts)
                             output.write(new_line)
-                    elif 0 < block_count < 11:
+                    elif 0 < block_count < 5:
                         if line.startswith("# Name:"):
                             current_minute += time_increment
                             current_hour += current_minute // 60

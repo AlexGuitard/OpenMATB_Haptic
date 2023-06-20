@@ -1,0 +1,7 @@
+combination;location;turbulence;workload
+A;Wrist;None;None
+B;Wrist;None;Moderate
+C;Wrist;None;Strong
+D;Wrist;Uncomfortable;None
+E;Wrist;Uncomfortable;Moderate
+F;Wrist;Uncomfortable;Strong

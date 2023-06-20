@@ -1,0 +1,69 @@
+# Scénario pour le practice de OpenMATB
+
+# Message d'accueil
+0:00:00;instructions;filename;default/welcome_screen.txt
+0:00:00;instructions;start
+
+# Visionnage de l'environnement complet pendant dix secondes
+0:00:00;tactonsinfo;start
+0:00:00;track;start
+0:00:00;resman;start
+0:00:00;communications;start
+
+# Présentation de la Poursuite
+0:00:10;resman;hide
+0:00:10;resman;pause
+0:00:10;communications;hide
+0:00:10;communications;pause
+0:00:10;instructions;filename;default/track.txt
+0:00:10;instructions;start
+0:00:10;track;targetproportion;0.7
+0:00:40;track;targetproportion;0.30000000000000004
+
+#Presentation de la communications
+0:01:00;communications;show
+0:01:00;communications;resume
+0:01:00;track;hide
+0:01:00;track;pause
+0:01:00;instructions;filename;default/communications.txt
+0:01:00;instructions;start
+0:01:05;communications;radioprompt;own
+0:01:25;communications;radioprompt;other
+
+# Présentation du Resman
+0:01:45;resman;show
+0:01:45;resman;resume
+0:01:45;communications;hide
+0:01:45;communications;pause
+0:01:45;instructions;filename;default/resman.txt
+0:01:45;instructions;start
+0:01:45;resman;tank-a-lossperminute;360
+0:01:45;resman;tank-b-lossperminute;360
+0:02:45;resman;tank-a-lossperminute;960
+0:02:45;resman;tank-b-lossperminute;960
+
+0:03:45;instructions;filename;default/full.txt
+0:03:45;instructions;start
+0:03:45;track;show
+0:03:45;track;resume
+0:03:45;communications;show
+0:03:45;communications;resume
+
+0:03:45;track;targetproportion;0.7
+0:04:45;track;targetproportion;0.30000000000000004
+
+0:03:45;resman;tank-a-lossperminute;360
+0:03:45;resman;tank-b-lossperminute;360
+0:04:45;resman;tank-a-lossperminute;960
+0:04:45;resman;tank-b-lossperminute;960
+
+0:04:15;communications;radioprompt;own
+0:04:45;communications;radioprompt;other
+0:05:15;communications;radioprompt;own
+0:05:40;communications;radioprompt;own
+
+0:06:00;tactonsinfo;stop
+0:06:00;track;stop
+0:06:00;communications;stop
+0:06:00;resman;stop
+

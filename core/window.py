@@ -149,7 +149,7 @@ class Window(Window):
         time_send = perf_counter()
         self.keyboard[keystr] = True  # KeyStateHandler
 
-        self.global_time_send = time_send
+        self.global_time_send = str(time_send)
 
         if keystr == 'ESCAPE':
             self.exit_prompt()
@@ -165,7 +165,6 @@ class Window(Window):
             self.send_key_press(keystr, self.global_time_send)
         if keystr != "user_key(af)":
             logger.record_input('keyboard', keystr, 'press', self.global_time_send)
-        print(self.global_time_send)
 
     def send_key_press(self, key, time):
         self.client.send_message("/keypress", [key, time])
@@ -196,7 +195,7 @@ class Window(Window):
 
 
     def on_joyaxis_motion(self, joystick, axis, value):
-        logger.record_input('joystick', axis, value)
+        logger.record_input('joystick', axis, value, perf_counter())
 
 
     def get_container_list(self):

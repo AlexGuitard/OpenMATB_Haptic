@@ -323,13 +323,13 @@ class Scheduler:
     def on_stop(self, address, *args):
         if address == "/stop":
             stop_expe = args[0]
+            print(stop_expe)
             if stop_expe:
                 self.exit()
 
     def let_focus(self, window_name):
         desktop = Desktop(backend="uia").window(title=window_name)
         if desktop.exists():
-            print("Avant test")
             desktop.set_focus()
         else:
             print(f"Aucune fenêtre avec le nom '{window_name}' n'a été trouvée.")
