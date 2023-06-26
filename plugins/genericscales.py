@@ -15,7 +15,7 @@ class Genericscales(BlockingPlugin):
 
         self.folder = P['QUESTIONNAIRES']
         new_par = dict(filename=None, pointsize=0, maxdurationsec=0, 
-                       response=dict(text=_('Please wait'), key='SPACE'),
+                       response=dict(text=_('Please wait'), key='W'),
                        allowkeypress=True)
         self.sliders = dict()
         self.parameters.update(new_par)
@@ -66,17 +66,21 @@ class Genericscales(BlockingPlugin):
                 if l == 0:
                     self.current_slider = self.sliders['slider_1']
                     self.current_slider.set_auto_focus()
-        print(self.sliders)
     
     def stop(self):
         for slider_name, slider_widget in self.sliders.items():
             self.log_performance(slider_widget.get_title(), slider_widget.get_value())
+        self.logger.log_manual_entry("end of block with nasatlx", 'end_nasatlx')
+        self.logger.write_on_disk()
+        self.logger.create_new_log_file()
         self.send_local_message(False)
         super().stop()
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == pyglet.window.key.TAB and self.current_slider is not None:
+        if symbol == pyglet.window.key.DOWN and self.current_slider is not None:
             self.focus_next_slider()
+        elif symbol == pyglet.window.key.UP and self.current_slider is not None:
+            self.focus_previous_slider()
 
     def focus_next_slider(self):
         current_rank = self.current_slider.rank
@@ -87,5 +91,16 @@ class Genericscales(BlockingPlugin):
         if next_slider is not None:
             self.current_slider.remove_focus()
             self.current_slider = next_slider
+            self.current_slider.set_auto_focus()
+
+    def focus_previous_slider(self):
+        current_rank = self.current_slider.rank
+        previous_rank = (current_rank - 1) % len(self.sliders)
+
+        previous_slider_name = f'slider_{previous_rank + 1}'
+        previous_slider = self.sliders.get(previous_slider_name)
+        if previous_slider is not None:
+            self.current_slider.remove_focus()
+            self.current_slider = previous_slider
             self.current_slider.set_auto_focus()
 

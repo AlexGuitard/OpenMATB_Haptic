@@ -1,0 +1,7 @@
+<h1>Présentation des tâches</h1>
+
+<p>Les taches OpenMATB a mener simultanément sont au nombre de 3 : 1/ la tache de poursuite; 2/ La tache de communication et 3/ La tache de gestion de ressources.
+Les différentes taches vont être présentés en détails dans les écrans suivants.</p>
+
+<img src="OpenMATB_test.png" alt="OpenMATB_test.png" width="1100">
+

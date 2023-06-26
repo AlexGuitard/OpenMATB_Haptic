@@ -1,6 +1,6 @@
 # Name:workload30_12
 # Technical load = 30.0 %
-0:00:00;tactonsinfo;start
+0:00:00;tactonsimg;start
 0:00:00;track;start
 0:00:00;track;targetproportion;0.7
 0:00:00;communications;start
@@ -164,7 +164,7 @@
 01:12:00;communications;resume
 01:12:00;resman;show
 01:12:00;resman;resume
-01:12:00;tactonsinfo;stop
+01:12:00;tactonsimg;stop
 01:12:00;track;stop
 01:12:00;resman;stop
 01:12:00;communications;stop

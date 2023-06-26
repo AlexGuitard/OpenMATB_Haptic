@@ -1,6 +1,6 @@
 # Name:workload00
 # Technical load = 00.0 %
-0:00:00;tactonsinfo;start
+0:00:00;tactonsimg;start
 0:00:00;track;hide
 0:00:00;track;pause
 0:00:00;communications;hide
@@ -15,7 +15,7 @@
 0:12:00;communications;resume
 0:12:00;resman;show
 0:12:00;resman;resume
-0:12:00;tactonsinfo;stop
+0:12:00;tactonsimg;stop
 0:12:00;track;stop
 0:12:00;resman;stop
 0:12:00;communications;stop

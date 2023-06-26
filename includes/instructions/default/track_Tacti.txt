@@ -1,0 +1,4 @@
+<h1>Présentation des tâches</h1>
+
+<p><B>Dans la tâche de poursuite</B>, le participant doit maintenir un curseur à l'aide du joystick dans la zone cible centrale symbolisée par un cercle blanc.</p>
+<p></p><BR><img src="track_Tacti.png" alt="track_Tacti.png" width="600">

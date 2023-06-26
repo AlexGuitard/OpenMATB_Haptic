@@ -45,4 +45,4 @@ MATCHING_ALIAS = M =dict(sysmon=_('System monitoring'),
                          genericscales=_('Generic scales'),
                          eyetracker=_('Eye tracker'),
                          performance=_('Performance'),
-                         tactonsinfo=_('Tactons Information'))
+                         tactonsimg=_('Tactons Information'))

@@ -184,6 +184,8 @@ class Tactilient(QMainWindow):
         if address == '/condition':
             condition = args[0]
             location = args[1]
+            workload = args[2]
+
             if condition == 'practice':
                 self.clearValues()
                 self.show_hints_signal.emit()

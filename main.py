@@ -27,7 +27,7 @@ language = gettext.translation('openmatb', LOCALE_PATH, [language_iso])
 language.install()
 
 # Only after language installation, import core modules (they must be translated)
-from core import Window, Scenario, Scheduler
+from core import Window, Scenario, Scheduler, logger
 from core.constants import PATHS as P
 from core.error import errors
 
@@ -44,13 +44,14 @@ for param in ['fullscreen', 'highlight_aoi', 'hide_on_pause', 'display_session_n
 
 
 class OpenMATB:
+
     def __init__(self):
         # The MATB window must be bordeless (in non-fullscreen mode)
         window = Window(screen_index=config['Openmatb']['screen_index'], font_name=config['Openmatb']['font_name'],
                         fullscreen=fullscreen, replay_mode=False, highlight_aoi=highlight_aoi,
                         hide_on_pause=hide_on_pause)
 
-        val = sys.stdin.readline().rstrip()
+        val = logger.title
 
         if val != '':
             scenario_path = P['SCENARIOS'].joinpath(val)

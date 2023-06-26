@@ -3,6 +3,7 @@
 # License : CeCILL, version 2.1 (see the LICENSE file)
 import os
 import threading
+import time
 
 import pygetwindow
 import win32gui
@@ -65,7 +66,9 @@ class Scheduler:
         self.server = None
 
         self.condition = None
+        self.workload = None
         self.count_time = 0
+
 
     def update(self, dt):
         if self.win.modal_dialog is not None:
@@ -276,6 +279,7 @@ class Scheduler:
         matb_dispatcher.map("/conditionfinish", self.on_finish_message)
         matb_dispatcher.map("/workload", self.on_workload_message)
         matb_dispatcher.map("/next", self.block_rcvd)
+        matb_dispatcher.map("/trial", self.trial_rcvd)
         matb_dispatcher.map("/stop", self.on_stop)
         self.server = osc_server.ThreadingOSCUDPServer(("127.0.0.3", 5005), matb_dispatcher)
         print("OpenMATB serving on {}".format(self.server.server_address))
@@ -295,26 +299,43 @@ class Scheduler:
     def on_finish_message(self, address, *args):
         if address == "/conditionfinish":
             finish = args[0]
+
             if finish and self.condition != "practice":
                 self.count_time += 720
                 self.scenariotime = self.count_time
+                logger.log_manual_entry(f"end block workload {self.workload}% & condition {self.condition}", 'endBlock')
+
+            if logger.title == 'generated/practice_tactilient.txt':
+                self.count_time += 720
+                self.scenariotime = self.count_time
+                logger.log_manual_entry(f"end block workload {self.workload}% & condition {self.condition}", 'endBlock')
+
+            if logger.title == 'generated/practice_tactilient-matb.txt':
+                self.count_time += 720
+                self.scenariotime = self.count_time
+                logger.log_manual_entry(f"end block workload {self.workload}% & condition {self.condition}", 'endBlock')
 
     def on_workload_message(self, address, *args):
         if address == "/workload":
-            workload = args[0]
+            self.workload = args[0]
             self.condition = args[1]
-            """match workload:
-                case "None":
-                    self.move_scenariotime(0)
-                case "Moderate":
-                    self.scenariotime = 600
-                case "Strong":
-                    self.scenariotime = 1800"""
+
+            if self.workload == 'None':
+                self.workload = 0
+            elif self.workload == 'Moderate':
+                self.workload = 30
+            else:
+                self.workload = 70
+
+            if self.condition != 'practice':
+                time.sleep(1.7)
+                logger.log_manual_entry(f"start block workload {self.workload}% & condition {self.condition}", 'startBlock')
 
     def block_rcvd(self, address, *args):
         if address == '/next':
             next_b = args[0]
             self.let_focus("main.py")
+
             if next_b:
                 plugin = self.get_active_blocking_plugin()
                 if plugin is not None:
@@ -326,6 +347,13 @@ class Scheduler:
             print(stop_expe)
             if stop_expe:
                 self.exit()
+
+    def trial_rcvd(self, address, *args):
+        if address == "/trial":
+            stimulus = args[0]
+            time = args[1]
+            if self.condition != 'practice':
+                logger.log_manual_entry(f"Playing trial stimulus {stimulus}", 'stimulus', time)
 
     def let_focus(self, window_name):
         desktop = Desktop(backend="uia").window(title=window_name)

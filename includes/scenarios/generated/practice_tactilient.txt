@@ -1,0 +1,5 @@
+# Scénario sans aucunes conditions
+
+0:00:00;tactonsimg;start
+
+0:12:00;tactonsimg;stop

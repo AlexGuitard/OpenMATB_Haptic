@@ -1,0 +1,8 @@
+<h1>Présentation des tâches</h1>
+
+<p><B>Dans la tâche de communication<B>, il s'agit pour le participant de répondre à des instructions sonores pour le réglage des fréquences de ses radios.
+Un message vocale est diffusé dans le casque. Si l'indicatif énoncé correspond à l'indicatif affiché en haut du bloc de communication.
+Le participant doit régler le bon canal à la bonne fréquence. Le participant ne doit rien faire si l'indicatif ennoncé ne correspond pas.<BR>
+<p>Pour le réglage, le participant doit utiliser les touches directionnelles "haut/bas" du clavier pour sélectionner le bon canal radio, et les touches "gauche/droite" pour diminuer/augmenter la fréquence de la radio sélectionnée.
+Le participants doit ensuite appuyer sur la touche "retour" pour valider sa réponse
+<p></p><BR><img src="communications_Tacti.png" alt="communications_Tacti.png" width="600"> <img src="touches_comm.jpg" alt="communications_Tacti.png" width="300">

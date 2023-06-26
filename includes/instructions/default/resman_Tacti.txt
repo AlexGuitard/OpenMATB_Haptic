@@ -1,0 +1,7 @@
+<h1>Présentation des tâches</h1>
+
+<p><B>Dans la tâche de gestion des ressources</B>, les participants doivent maintenir les deux réservoirs principaux A et B à un niveau de 2500 (+ ou - 100 indiqué) en activant et désactivant les huit pompes disponibles au moyen des touches numériques correspondante (de 1 à 8).
+    Le niveau à maintenir est indiqué par les rectangles noirs en bordure des reservoirs A et B.
+Pour activer une pompe le reservoir source ne doit pas être vide.<BR>
+<p>Des pompes peuvent parfois tomber en panne. Les états de fonctionnement des pompes sont indiqués dans la colonne de droite</p> 
+<p></p><BR><img src="resman_Tacti.png" alt="resman_Tacti.png" width="1200">     <img src="clavier.jpg" alt="clavier.jpg" width="350">

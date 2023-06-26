@@ -33,14 +33,14 @@ from plugins import *
 
 # Constants #
 EVENTS_REFRACTORY_DURATION = 2 # Delay before the next event is allowed (in seconds)
-DIFFICULTY_MIN = 0.3
-DIFFICULTY_MAX = 0.3
+DIFFICULTY_MIN = 0.7
+DIFFICULTY_MAX = 0.7
 DIFFICULTY_STEP_NUMBER = 1
 DIFFICULTY_STEP = (DIFFICULTY_MAX - DIFFICULTY_MIN) / (DIFFICULTY_STEP_NUMBER - 0)
 STEP_DURATION_SEC = 720
 COMMUNICATIONS_TARGET_RATIO = 0.50  # Proportion of target communications
 AVERAGE_AUDITORY_PROMPT_DURATION = 13
-SCENARIO_NAME = 'practice_full'
+SCENARIO_NAME = 'design'
 
 # Specify a scenario that should be added at the beginning
 ADD_SCENARIO_PATH = PATHS['SCENARIOS'].joinpath('custom_generator.txt')

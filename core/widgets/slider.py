@@ -1,6 +1,7 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
+from ctypes import c_ubyte
 
 from pyglet.gl import *
 from core.container import Container
@@ -165,8 +166,6 @@ class Slider(AbstractWidget):
             self.update_groove_value(ratio)
 
     def on_key_press(self, symbol, modifiers):
-        print(self.rank)
-        print(self.focus)
         if self.focus:
             if symbol == pyglet.window.key.LEFT:
                 self.key_pressed = True
@@ -209,6 +208,19 @@ class Slider(AbstractWidget):
             cursor = self.win.get_system_mouse_cursor(self.win.CURSOR_DEFAULT)
         self.win.set_mouse_cursor(cursor)
 
+    def update_color_focus(self):
+        if self.focus:
+            groove_b_colors = [241, 100, 100, 255]
+        else:
+            groove_b_colors = [153, 204, 255, 255]
+
+        groove_b_colors *= len(self.on_batch['groove_b'].colors) // 4
+
+        if 'groove_b' in self.on_batch:
+            vertex = self.on_batch['groove_b']
+            colors_array = (c_ubyte * len(vertex.colors))(*groove_b_colors)
+            vertex.colors[:] = colors_array
+
 
     def update(self):
         if self.visible:
@@ -221,11 +233,11 @@ class Slider(AbstractWidget):
 
     def set_auto_focus(self):
         self.focus = True
-        self.update_cursor_appearance()
+        self.update_color_focus()
 
     def remove_focus(self):
         self.focus = False
-        self.update_cursor_appearance()
+        self.update_color_focus()
 
     def show(self):
         super().show()

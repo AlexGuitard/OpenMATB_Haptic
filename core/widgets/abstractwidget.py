@@ -102,6 +102,8 @@ class AbstractWidget:
     def get_vertex_color(self, vertex_name):
         return tuple(self.on_batch[vertex_name].colors[:][0:4])
 
+    """def set_vertex_color(self, vertex_name,color):
+        self.on_batch[vertex_name]."""
 
     def vertice_strip(self, vertice):
         '''Develop a list of vertice points to obtain a list of vertice segments'''

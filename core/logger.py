@@ -1,11 +1,13 @@
 # Copyright 2023, by Julien Cegarra & Benoît Valéry. All rights reserved.
 # Institut National Universitaire Champollion (Albi, France).
 # License : CeCILL, version 2.1 (see the LICENSE file)
-
+import os
+import sys
 from collections import namedtuple
 from time import perf_counter
 from datetime import datetime
 from csv import DictWriter
+
 from core.constants import PATHS
 
 class Logger:
@@ -14,12 +16,13 @@ class Logger:
         self.fields_list = ['logtime', 'scenariotime', 'type', 'module', 'address', 'value']
         self.slot = namedtuple('Row', self.fields_list)
         self.maxfloats = 6  # Time logged at microsecond precision
-        self.session_id = None
+        self.session_id = 1
+        self.scenario_number = None
         self.lsl = None
 
         # At instanciation, the logger should automatically compute the session number
         # The current session number is the lowest integer available in the whole session directory
-        try:
+        """try:
             session_numbers = [int(s.name.split('_')[0]) 
                                for s in PATHS['SESSIONS'].glob('**/*.csv')]
         except:
@@ -31,10 +34,29 @@ class Logger:
 
         for n in range(1, max(session_numbers)+2):
             if self.session_id is None and n not in session_numbers:
-                self.session_id = n
+                self.session_id = n"""
 
-        self.path = PATHS['SESSIONS'].joinpath(self.datetime.strftime("%d-%m-%Y"),
-                                f'{self.session_id}_{self.datetime.strftime("%y%m%d_%H%M%S")}.csv')
+        try:
+            test_number = [int(s.name.split('-')[0])
+                               for s in PATHS['SESSIONS'].glob('*')]
+        except:
+            test_number = [0]
+
+        if len(test_number) == 0:
+            test_number = [0]
+
+        for n in range(1, max(test_number)+2):
+            if self.scenario_number is None and n not in test_number:
+                self.scenario_number = n
+
+        self.title = sys.stdin.readline().rstrip()
+
+        self.path_title = self.title.split("/")[-1] + '-' + self.datetime.strftime("%d%m%Y")
+        #self.path_title = str(self.scenario_number) + '-' + self.datetime.strftime("%d%m%Y")
+
+        #self.path = PATHS['SESSIONS'].joinpath(self.datetime.strftime("%d-%m-%Y"),f'{self.session_id}_{self.datetime.strftime("%y%m%d_%H%M%S")}.csv')
+
+        self.path = PATHS['SESSIONS'].joinpath(self.path_title, f'{self.session_id}_{self.datetime.strftime("%d%m%y_%H%M%S")}.csv')
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.mode = 'w'
 
@@ -83,8 +105,11 @@ class Logger:
         self.write_single_slot(slot)
 
 
-    def log_manual_entry(self, entry, key='manual'):
-        slot = [perf_counter(), self.scenariotime, key, '', '', entry]
+    def log_manual_entry(self, entry, key='manual', time=None):
+        if time is not None:
+            slot = [time, self.scenariotime, key, '', '', entry]
+        else:
+            slot = [perf_counter(), self.scenariotime, key, '', '', entry]
         self.write_single_slot(slot)
 
 
@@ -96,17 +121,25 @@ class Logger:
     def __exit__(self, type, value, traceback):
         self.file.close()
 
-
     def open(self):
         create_header = False if self.path.exists() and self.mode == 'a' else True
-        self.file = open(str(self.path), self.mode, newline = '')
+        self.file = open(str(self.path), self.mode, newline='')
         self.writer = DictWriter(self.file, fieldnames=self.fields_list)
         if create_header:
             self.writer.writeheader()
 
-
     def close(self):
-        self.file.close()
+        if self.file is not None:
+            self.file.close()
+
+    def create_new_log_file(self):
+        self.close()  # Fermer le fichier précédent s'il est ouvert
+        self.session_id += 1  # Incrémenter l'ID de session
+        self.path = PATHS['SESSIONS'].joinpath(
+            str(self.path_title),
+            f'{self.session_id}_{self.datetime.strftime("%d%m%y_%H%M%S")}.csv'
+        )
+        self.open()
 
 
     def add_row_to_queue(self, row):
@@ -152,6 +185,15 @@ class Logger:
 
     def set_scenariotime(self, scenariotime):
         self.scenariotime = scenariotime
-        
+
+    def write_on_disk(self):
+        self.file.flush()
+        os.fsync(self.file)
+
+    def should_create_new_log_file(self):
+        # Votre logique pour déterminer si un nouveau fichier de journalisation doit être créé
+        # Par exemple, si la taille du fichier actuel a atteint une limite prédéfinie
+        return False  # Modifier cette condition en fonction de votre logique réelle
+
 
 logger = Logger()

@@ -1,16 +1,19 @@
 # Scénario de test du OpenMATB
 
-0:00:00;tactonsinfo;start
+0:00:00;tactonsimg;start
 0:00:00;track;start
 0:00:00;resman;start
 0:00:00;communications;start
 
-0:00:02;genericscales;filename;nasatlx_fr.txt
-0:00:02;genericscales;start
+#0:00:02;genericscales;filename;nasatlx_fr.txt
+#0:00:02;genericscales;start
+
+0:00:02;instructions;filename;default/full.txt
+0:00:02;instructions;start
 
 0:10:00;communications;start
 
-0:15:00;tactonsinfo;stop
+0:15:00;tactonsimg;stop
 0:15:00;track;stop
 0:15:00;communications;stop
 0:15:00;resman;stop
