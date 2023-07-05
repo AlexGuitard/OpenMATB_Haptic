@@ -83,24 +83,26 @@ class Genericscales(BlockingPlugin):
             self.focus_previous_slider()
 
     def focus_next_slider(self):
-        current_rank = self.current_slider.rank
-        next_rank = (current_rank + 1) % len(self.sliders)
+        if not self.is_paused():
+            current_rank = self.current_slider.rank
+            next_rank = (current_rank + 1) % len(self.sliders)
 
-        next_slider_name = f'slider_{next_rank + 1}'
-        next_slider = self.sliders.get(next_slider_name)
-        if next_slider is not None:
-            self.current_slider.remove_focus()
-            self.current_slider = next_slider
-            self.current_slider.set_auto_focus()
+            next_slider_name = f'slider_{next_rank + 1}'
+            next_slider = self.sliders.get(next_slider_name)
+            if next_slider is not None:
+                self.current_slider.remove_focus()
+                self.current_slider = next_slider
+                self.current_slider.set_auto_focus()
 
     def focus_previous_slider(self):
-        current_rank = self.current_slider.rank
-        previous_rank = (current_rank - 1) % len(self.sliders)
+        if not self.is_paused():
+            current_rank = self.current_slider.rank
+            previous_rank = (current_rank - 1) % len(self.sliders)
 
-        previous_slider_name = f'slider_{previous_rank + 1}'
-        previous_slider = self.sliders.get(previous_slider_name)
-        if previous_slider is not None:
-            self.current_slider.remove_focus()
-            self.current_slider = previous_slider
-            self.current_slider.set_auto_focus()
+            previous_slider_name = f'slider_{previous_rank + 1}'
+            previous_slider = self.sliders.get(previous_slider_name)
+            if previous_slider is not None:
+                self.current_slider.remove_focus()
+                self.current_slider = previous_slider
+                self.current_slider.set_auto_focus()
 

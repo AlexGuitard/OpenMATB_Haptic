@@ -15,7 +15,7 @@ blocks_directory_70 = "includes/scenarios/generated/workload_70"
 blocks_directory_path = Path(blocks_directory_70)
 input_files_70 = [str(blocks_directory_path.joinpath("workload70_{}.txt".format(i))) for i in range(1, 13)]
 
-input_csv_tri = 'includes/experimental_design/wrist_only_19062023.csv'
+input_csv_tri = 'includes/experimental_design/wrist_only_29062023_P19_20.csv'
 csv_data_tri = []
 with open(input_csv_tri, 'r') as file:
     reader = csv.reader(file, delimiter=';')

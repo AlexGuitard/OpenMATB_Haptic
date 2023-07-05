@@ -344,7 +344,6 @@ class Scheduler:
     def on_stop(self, address, *args):
         if address == "/stop":
             stop_expe = args[0]
-            print(stop_expe)
             if stop_expe:
                 self.exit()
 

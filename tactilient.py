@@ -4,12 +4,11 @@ import threading
 import time
 
 import pygetwindow
-from pywinauto import Desktop
-from pynput import mouse
+from pynput import mouse, keyboard
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Signal, QObject, Slot, QThread, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
-from PySide6.QtGui import QPixmap, QFont
+from PySide6.QtGui import QPixmap, QFont, QKeyEvent
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from pythonosc import osc_server
 from pythonosc.dispatcher import Dispatcher
@@ -37,7 +36,7 @@ class Tactilient(QMainWindow):
         self.point_label = QLabel(self)
         self.point_label.setFixedSize(20, 20)
         self.point_label.setStyleSheet("background-color: green; border-radius: 10px")
-        self.point_label.setVisible(True)
+        #self.point_label.setVisible(True)
         layout.addWidget(self.point_label, alignment=QtCore.Qt.AlignRight)
 
         #image tactons
@@ -122,7 +121,9 @@ class Tactilient(QMainWindow):
         self.show_hints_signal.connect(self.showHints)
         self.show()
         self.listener = mouse.Listener(on_click=self.on_click)
+        self.keyboard_listener = keyboard.Listener(on_press=self.on_press)
         self.listener.start()
+        self.keyboard_listener.start()
 
     def on_click(self, x, y, button, pressed):
         if pressed:
@@ -138,12 +139,18 @@ class Tactilient(QMainWindow):
             self.point_label.setStyleSheet("background-color: red; border-radius: 10px")
             print("focus out")
 
+    def on_press(self, key):
+        if key == keyboard.Key.f1:
+            print("Touche F1 appuyée")
+
+
     def handleMediaStatusChanged(self, status):
         if status == QMediaPlayer.EndOfMedia:
             self.player.setPosition(0)
             self.player.play()
 
     def update_trial(self, address, *args):
+        print(self.text_response.text())
         if address == "/value":
             value = 't' + str(args[0])
             response = args[1]
@@ -152,8 +159,10 @@ class Tactilient(QMainWindow):
             else:
                 response = 't' + str(response)
 
-            self.text_value.setText(value)
-            self.text_response.setText(response)
+            self.text_value.setText(str(value))
+            self.text_response.setText(str(response))
+
+            print(self.text_response.text())
 
             if response == value:
                 self.text_response.setStyleSheet("margin-left: 15px; color: green;")
@@ -161,6 +170,15 @@ class Tactilient(QMainWindow):
                 self.text_response.setStyleSheet("margin-left: 15px; color: red;")
             time.sleep(2)
             self.clearValues()
+            print(self.text_response.text())
+
+    def update_clear(self, address, *args):
+        if address == "/clear":
+            clear = args[0]
+            print(clear)
+            if clear:
+                self.clearValues()
+                print(self.text_response.text())
 
     def showHints(self):
         self.value.setVisible(True)
@@ -184,7 +202,7 @@ class Tactilient(QMainWindow):
         if address == '/condition':
             condition = args[0]
             location = args[1]
-            workload = args[2]
+            #workload = args[2]
 
             if condition == 'practice':
                 self.clearValues()
@@ -207,6 +225,7 @@ class Tactilient(QMainWindow):
         dispatcher.map("/value", self.update_trial)
         dispatcher.map("/condition", self.init_practice_mode)
         dispatcher.map("/minimize", self.minimize_window)
+        dispatcher.map("/clear", self.update_clear)
         self.server = osc_server.ThreadingOSCUDPServer(("127.0.0.3", 5001), dispatcher)
         print("OpenMATB-Tactilient serving on {}".format(self.server.server_address))
         thread = threading.Thread(target=self.server.serve_forever)

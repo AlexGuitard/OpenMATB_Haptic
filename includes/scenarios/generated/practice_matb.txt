@@ -41,31 +41,31 @@
 0:01:45;instructions;start
 0:01:45;resman;tank-a-lossperminute;360
 0:01:45;resman;tank-b-lossperminute;360
-0:02:45;resman;tank-a-lossperminute;960
-0:02:45;resman;tank-b-lossperminute;960
+0:02:15;resman;tank-a-lossperminute;960
+0:02:15;resman;tank-b-lossperminute;960
 
-0:03:45;instructions;filename;default/full_Tacti.txt
-0:03:45;instructions;start
-0:03:45;track;show
-0:03:45;track;resume
-0:03:45;communications;show
-0:03:45;communications;resume
+0:02:45;instructions;filename;default/full.txt
+0:02:45;instructions;start
+0:02:45;track;show
+0:02:45;track;resume
+0:02:45;communications;show
+0:02:45;communications;resume
 
-0:03:45;track;targetproportion;0.7
-0:04:45;track;targetproportion;0.30000000000000004
+0:02:45;track;targetproportion;0.7
+0:03:45;track;targetproportion;0.30000000000000004
 
-0:03:45;resman;tank-a-lossperminute;360
-0:03:45;resman;tank-b-lossperminute;360
-0:04:45;resman;tank-a-lossperminute;960
-0:04:45;resman;tank-b-lossperminute;960
+0:02:45;resman;tank-a-lossperminute;360
+0:02:45;resman;tank-b-lossperminute;360
+0:03:45;resman;tank-a-lossperminute;960
+0:03:45;resman;tank-b-lossperminute;960
 
-0:04:15;communications;radioprompt;own
-0:04:45;communications;radioprompt;other
-0:05:15;communications;radioprompt;own
-0:05:40;communications;radioprompt;own
+0:03:05;communications;radioprompt;own
+0:03:40;communications;radioprompt;other
+0:04:10;communications;radioprompt;own
+0:04:31;communications;radioprompt;own
 
-0:06:00;tactonsimg;stop
-0:06:00;track;stop
-0:06:00;communications;stop
-0:06:00;resman;stop
+0:05:00;tactonsimg;stop
+0:05:00;track;stop
+0:05:00;communications;stop
+0:05:00;resman;stop
 

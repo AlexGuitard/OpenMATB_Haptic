@@ -53,7 +53,7 @@ class Slider(AbstractWidget):
         self.win.push_handlers(self.on_mouse_press, self.on_mouse_drag,
                                self.on_mouse_release, self.on_key_press, self.on_key_release)
 
-        pyglet.clock.schedule_interval(self.update_value, 1 / 10)
+        pyglet.clock.schedule_interval(self.update_value, 1 / 20)
 
         self.tab_index = None
 
