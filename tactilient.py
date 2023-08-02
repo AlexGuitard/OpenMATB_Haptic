@@ -142,7 +142,7 @@ class Tactilient(QMainWindow):
     def on_press(self, key):
         if key == keyboard.Key.f1:
             print("Touche F1 appuyée")
-
+            self.update()
 
     def handleMediaStatusChanged(self, status):
         if status == QMediaPlayer.EndOfMedia:
@@ -150,7 +150,6 @@ class Tactilient(QMainWindow):
             self.player.play()
 
     def update_trial(self, address, *args):
-        print(self.text_response.text())
         if address == "/value":
             value = 't' + str(args[0])
             response = args[1]
@@ -162,15 +161,12 @@ class Tactilient(QMainWindow):
             self.text_value.setText(str(value))
             self.text_response.setText(str(response))
 
-            print(self.text_response.text())
-
             if response == value:
                 self.text_response.setStyleSheet("margin-left: 15px; color: green;")
             else:
                 self.text_response.setStyleSheet("margin-left: 15px; color: red;")
             time.sleep(2)
             self.clearValues()
-            print(self.text_response.text())
 
     def update_clear(self, address, *args):
         if address == "/clear":
